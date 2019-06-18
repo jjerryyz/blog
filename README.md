@@ -48,7 +48,7 @@ tornado 使用 asyncio 作为异步 io 库
 或者从下载源码，本地安装
 
 `git clone https://github.com/tornadoweb/tornado.git`
-`pip setup.py install`
+`python setup.py install`
 
 
 
@@ -328,4 +328,9 @@ app = tornado.web.Application([
 - 默认模板渲染缓存是打开的，配置`compiled_template_cache=False`或者`debug=True`关闭功能
 
 #### 模板语法
+
+- 以`{%` 和`%}`包裹表达式
+- 控制语句使用 `{%`和 `%}`括起来，如`{% if len(items) > 2 %}`
+- 表达式使用`{}`，如`{ items[0] }`，允许使用任意表达式，其中可以调用的函数列表在官方文档中列出
+- 使用`extends`和`block`表达式继承模板
 
