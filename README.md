@@ -330,7 +330,84 @@ app = tornado.web.Application([
 #### 模板语法
 
 - 以`{%` 和`%}`包裹表达式
-- 控制语句使用 `{%`和 `%}`括起来，如`{% if len(items) > 2 %}`
-- 表达式使用`{}`，如`{ items[0] }`，允许使用任意表达式，其中可以调用的函数列表在官方文档中列出
-- 使用`extends`和`block`表达式继承模板
 
+- 控制语句使用 `{%`和 `%}`括起来，如`{% if len(items) > 2 %}`
+
+- 表达式使用`{}`，如`{ items[0] }`，允许使用任意表达式，其中可以调用的函数列表在官方文档中列出
+
+- 使用`extends`和`block`表达式扩展模板
+
+  ```html
+  ### base.html
+  <html>
+  	...
+        {% for student in students %}
+          {% block student %}
+            <li>{{ escape(student.name) }}</li>
+          {% end %}
+        {% end %}
+  	...
+  </html>
+  
+  ### bold.html
+  {% extends "base.html" %}
+  
+  {% block student %}
+    <li><span style="bold">{{ escape(student.name) }}</span></li>
+  {% end %}
+  ```
+
+  `{% extends "base.html" %}`表示继承base.html，此后 `{% block xxx %}`部分会覆写父模板的相应block
+
+- 模板输出默认是逃逸字符的，使用`tornado.escape.xhtml_escape`方法处理；想禁止这一行为，
+
+  - `Application`设置`autoescape=None`
+  - 模板文件中使用`{% autoescape None %}`
+  - 使用单一表达式`{{ ... }}`或`{% raw ... %}`
+  - 只处理html部分的逃逸，js和css部分需另外处理，参考https://wonko.com/post/html-escaping
+
+#### 国际化
+
+- `self.locale`可以获取到本地化相关详细
+- 使用`Locale.translate`或者_()将传入字符串转换为本地化的字符串
+
+```python
+# 如果在中国返回，一下字符串会转成“翻译这个字符串”
+_("Translate this string")
+# 第三个参数决定返回的字符串，如果people人数是1，则返回第一个字符串，否则返回第二个字符串
+_("A person liked this","%(num)d people liked this",len(people))
+	% {"num": len(people)}
+```
+
+#### Accept-Language
+
+默认`Accept-Language`请求头接收用户的本地化信息，有时候我们想修改默认的locale解析，
+
+```python
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        user_id = self.get_secure_cookie("user")
+        if not user_id: return None
+        return self.backend.get_user_by_id(user_id)
+
+    def get_user_locale(self):
+        if "locale" not in self.current_user.prefs:
+            # Use the Accept-Language header
+            return None
+        return self.current_user.prefs["locale"]
+```
+
+- tornado.locale支持两种格式的locale
+  - .mo
+  - .csv
+- 获取支持的本地化配置`tornado.locale.get_supported_locales()`
+
+#### UI 模块
+
+例子说明
+
+
+
+## 部署与调试开关
+
+- `autoreload=True`当代码修改后，自动重载程序
