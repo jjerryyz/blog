@@ -411,3 +411,62 @@ class BaseHandler(tornado.web.RequestHandler):
 ## 部署与调试开关
 
 - `autoreload=True`当代码修改后，自动重载程序
+
+
+
+## Bootstrap
+
+bootstrap4.1版本文档<https://getbootstrap.com/docs/4.1/layout/overview/>
+
+#### NavBar
+
+- `Navbars` 需要 `navbar` 和 `.navbar-expand{-sm|-md|-lg|-xl}`css属性来处理响应式折叠与`color scheme`
+
+- 默认样式是`fluid`，使用可选的容器去限制宽度
+
+  fluid 是一种随着设备分辨率自动适配的css属性
+
+-  使用`spacing`和`flex`工具属性控制间隔和对齐
+
+  `flex`是一种伸缩布局
+
+- `Navbars` 默认是响应式的，响应式的折叠行为依赖于`Collapse` js插件
+
+- `Navbars`默认打印时不显示，`.navbar`后配置`.d-print`使能打印，参考`display`工具属性
+
+- 为了保证框架可以识别到你的标签，尽量使用`nav`元素；如果使用`div`标签，也要保证设置`role="navigation"`
+
+  `role`属性是`ARIA1.0`提出的，并随后引入到`HTML5`，主要目的有两个：为了分离标签的语义与展示效果；为了兼容没有实现相应语义标签解析的浏览器
+
+  `ARIA`（Accessible Rich Internet Applications） 是`W3C`针对`html`的可访问性提出的标准
+
+
+#### 支持的子组件
+
+- `.navbar-brand`展示商品的标识或者项目名称
+
+- `.navbar-nav` 占据全高度的具有下拉菜单功能的导航栏
+
+- `.navbar-toggler` 与`collapse`插件一起使用，或者其他`navigation togging`行为
+
+- `.form-inline` 表单控制和行为
+
+- `.navbar-text` 居中显示字符串
+
+- `.collapse.navbar-collapse`使用父级元素的`breakpoint`管理`navbar`内容
+
+  breakpoint 指的是用作适配极端机型的一些媒体查询范围（media query ranges）
+
+## CSS
+
+#### layout mode
+
+- 一般布局流，包括 `block layout`,`inline layout`
+  - `block layout`针对段落等块状布局
+  - `inline layout`针对内联的文字
+- 表格布局，为表格设计
+- 浮动布局（Float layout），用于项目向左或向右放置，同时其余项目按照一般布局流布置
+- 定位布局（Positioned layout），用于界面中有自己固定位置，与别的元素没有太大关系的布局
+- 多栏目布局（Multi-column layout），用于设计像报纸一样的布局
+- 弹性盒子布局（Flexible box layout），用于设计复杂的，尺寸灵活伸缩的布局
+- 栅格布局（grid layout），用于固定大小栅格的布局

@@ -22,8 +22,9 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handler, **settings)
 
 class HomeHandler(tornado.web.RequestHandler):
-    async def get(self):
-        self.render('home.html')
+    def get(self):
+        items = [{'title': "title1", 'link': '#'}, {'title': "title2", 'link': '#'}]
+        self.render('home.html', items=items)
 
 if __name__ == "__main__":
     app = Application()

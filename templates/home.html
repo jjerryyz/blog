@@ -1,8 +1,30 @@
 {% extends "base.html" %}
 
 {% block body %}
-  <!-- {% for entry in entries %}
-    {% module Entry(entry) %}
-  {% end %} -->
-  <div><a href="/archive">{{ _("Archive") }}</a></div>
+<div>
+  <nav class="navbar navbar-light navbar-expand-md navigation-clean" style="padding-left: 0;">
+    <div class="container"><a class="navbar-brand" href="#">Jerry's Blog</a><button class="navbar-toggler"
+        data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+          class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="nav navbar-nav ml-auto">
+          <li class="nav-item" role="presentation"><a class="nav-link" href="#">存档</a></li>
+          <li class="nav-item" role="presentation"><a class="nav-link" href="#">打赏</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <hr style="margin: 0;">
+</div>
+
+<ul class="list-group" style="margin: 52px;margin-left: 121px;margin-right: 111px;">
+  {% for item in items %}
+    <li class="list-group-item list-group-item-action"><a style="font-size: 26px;" href="{{url_escape(item.link)}}">{{item.title}}<br></a></li>
+  {% end %}
+</ul>
+{% end %}
+
+{% block bottom %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 {% end %}
