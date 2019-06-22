@@ -19,12 +19,7 @@
 
 <ul class="list-group" style="margin: 52px;margin-left: 121px;margin-right: 111px;">
   {% for item in items %}
-    <li class="list-group-item list-group-item-action"><a style="font-size: 26px;" href="{{url_escape(item.link)}}">{{item.title}}<br></a></li>
+    <li class="list-group-item list-group-item-action"><a style="font-size: 26px;" href="{{item['link']}}">{{item['title']}}<br></a></li>
   {% end %}
 </ul>
-{% end %}
-
-{% block bottom %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 {% end %}

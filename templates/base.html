@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <title>{{ escape(handler.settings["blog_title"]) }}</title>
-    <link rel="stylesheet" href="{{ static_url("blog.css") }}" type="text/css">
+    <link rel="stylesheet" href="{{ static_url("bootstrap/css/bootstrap.min.css") }}" type="text/css">
+    <link rel="stylesheet" href="{{ static_url("css/Navigation-Clean.css") }}" type="text/css">
+    <link rel="stylesheet" href="{{ static_url("css/styles.css") }}" type="text/css">
     <link rel="alternate" href="/feed" type="application/atom+xml" title="{{ escape(handler.settings["blog_title"]) }}">
-    <!-- bootstrap -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ static_url("js/jquery.min.js") }}"></script>
+    <script src="{{ static_url("bootstrap/js/bootstrap.min.js") }}"></script>
     {% block head %}{% end %}
   </head>
   <body>
     <div id="body">
-      <div id="content">{% block body %}{% end %}</div>
+      {% block body %}{% end %}
     </div>
     {% block bottom %}{% end %}
   </body>

@@ -402,9 +402,40 @@ class BaseHandler(tornado.web.RequestHandler):
   - .csv
 - 获取支持的本地化配置`tornado.locale.get_supported_locales()`
 
-#### UI 模块
+#### UI modules
 
-例子说明
+`tornado` 支持编写UI组件来达到代码重复利用的目的，UI modules 可以理解为一个帮助你渲染组件的特殊的函数调用
+
+- UI modules支持将js和css打包成一个独立模块
+- UI modules与引用它的模板具有不同的命名空间，因此组件只能访问其本身传入的变量和全局变量
+
+1. 编写一个组件，比如说entry.html
+
+   ```html
+   <div id="entry">
+       <h1>This is a {{entry}}</h1>
+   </div>
+   ```
+
+2. 向`Application.setting`注册组件
+
+   ```python
+   class Application(tornado.web.Application):
+   	...
+           settings = dict(
+               ui_modules={"Entry": EntryModule},
+               ...
+           )
+   class EntryModule(tornado.web.UIModule):
+       def render(self, entry):
+           return self.render_string("modules/entry.html", entry=entry)
+   ```
+
+3. 在模板中引用组件
+
+   ```html
+   {% module Entry(entry) %}
+   ```
 
 
 
@@ -470,3 +501,48 @@ bootstrap4.1版本文档<https://getbootstrap.com/docs/4.1/layout/overview/>
 - 多栏目布局（Multi-column layout），用于设计像报纸一样的布局
 - 弹性盒子布局（Flexible box layout），用于设计复杂的，尺寸灵活伸缩的布局
 - 栅格布局（grid layout），用于固定大小栅格的布局
+
+#### 选择器（selectors）
+
+简单的选择器：
+
+- element选择器，标签选择器
+- Class选择器，.classname
+- ID选择器，#idname
+- 通用选择器，css3之后，出现命名空间的概念
+- 属性选择器，形如a[href="<特定的值>"]的选择器
+
+将简单的选择器进行一定的组合，可以得到复杂的效果：
+
+- A + B 具有同一个父级元素，B紧随着A后面
+- A ~ B 具有同一个父级元素，B不需要紧随着A后面
+- A  > B B选择器必须在A选择器的子级
+
+##### 伪类（Pseudo-classes）
+
+有时候我们需要在元素某个特定的状态显示某种样式，比如
+
+```css
+button:hover {
+  color: blue;
+}
+```
+
+按钮将只会在鼠标悬浮在上面时显示蓝色
+
+##### 伪元素（Pseudo-elements）
+
+有时候我们需要对元素内部的某个部分显示特定的样式
+
+#### css声明
+
+CSS包含两种声明，
+
+- Rulesets，表示样式规则，就是前面提到的选择器
+- At-rules，表示与环境相关的属性，比如@media、@viewport等
+
+只有在这两种集合的声明中才是有效的，还有一种集合，只有在特定的情况下才会生效的声明，我们称之为条件声明（the conditional group rules），如下图
+
+![css syntax - statements Venn diag](G:\Personal\workspace\blog\css syntax - statements Venn diag.png)
+
+常见的条件声明有，`@document`，`@media`等
