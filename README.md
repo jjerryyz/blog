@@ -492,7 +492,7 @@ bootstrap4.1版本文档<https://getbootstrap.com/docs/4.1/layout/overview/>
 
 ## CSS
 
-#### layout mode
+#### 布局模式（layout mode）
 
 - 一般布局流，包括 `block layout`,`inline layout`
   - `block layout`针对段落等块状布局
@@ -545,18 +545,34 @@ p::first-line {
 
 样式只会适用于第一行
 
-#### css声明
+#### css语句
 
-CSS包含两种声明，
+CSS包含两种语句，
 
 - Rulesets，表示样式规则，就是前面提到的选择器
 - At-rules，表示与环境相关的属性，比如@media、@viewport等
 
-只有在这两种集合的声明中才是有效的，还有一种集合，只有在特定的情况下才会生效的声明，我们称之为条件声明（the conditional group rules），如下图
+只有在这两种集合的语句中才是有效的，还有一种集合，只有在特定的情况下才会生效的语句，我们称之为条件组（the conditional group rules），如下图
 
 ![css syntax - statements Venn diag](misc\css syntax - statements Venn diag.png)
 
 常见的条件声明有，`@document`，`@media`等
+
+#### 样式来源（Style origin）
+
+Style origin指的是样式表的来源
+
+- User agent origin
+
+  由用户浏览器默认属性值组成的，一般没有显示的指定样式的话，就采用此值
+
+- User origin
+
+  浏览器用户通过外部方式添加到页面上的（比如开发工具里面编辑样式）
+
+- Author origin
+
+  当然就是页面作者编写的样式表了
 
 #### 瀑布流模型（The cascade）
 
@@ -600,6 +616,22 @@ CSS包含两种声明，
 *注意：cascade算法实现的颗粒度是属性级别的，也就是说同一个样式规则会出现部分被覆盖，而其余被采用的情况*
 
 ##### 继承
+
+样式中如果指定元素标签，是会根据在文档中的出现顺序被继承下来，除非有足够好的理由，有些元素标签我们不希望事先被决定好
+
+- `font-family`、`color`等影响全局或者基本属性的，如果每个样式都应用自己的字体和颜色，一切将会变得无法维护
+- `margin`、`padding`、`backgroud`同理，这些属性通常都是属于全局统筹的
+
+css规定了一些值可以让我们去控制这些继承关系
+
+- 继承（inherit）使用和父级元素标签一样的属性值
+- 初始化（initial）使用浏览器默认的值
+- 未设置（unset）如果有父级元素，则集成父级元素属性值；否则就会是initial
+- 回滚（revert）*大部分浏览器不兼容*，我们不应该花太多注意力在上面
+
+特别地，css还规定了`all`属性，可以对`all`属性应用`inherit`、`initial`、`unset`、`revert`
+
+#### 
 
 
 
