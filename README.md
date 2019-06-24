@@ -488,6 +488,8 @@ bootstrap4.1版本文档<https://getbootstrap.com/docs/4.1/layout/overview/>
 
   breakpoint 指的是用作适配极端机型的一些媒体查询范围（media query ranges）
 
+
+
 ## CSS
 
 #### layout mode
@@ -532,7 +534,16 @@ button:hover {
 
 ##### 伪元素（Pseudo-elements）
 
-有时候我们需要对元素内部的某个部分显示特定的样式
+有时候我们需要对元素内部的某个部分显示特定的样式，比如
+
+```css
+p::first-line {
+  color: blue;
+  text-transform: uppercase;
+}
+```
+
+样式只会适用于第一行
 
 #### css声明
 
@@ -543,6 +554,52 @@ CSS包含两种声明，
 
 只有在这两种集合的声明中才是有效的，还有一种集合，只有在特定的情况下才会生效的声明，我们称之为条件声明（the conditional group rules），如下图
 
-![css syntax - statements Venn diag](G:\Personal\workspace\blog\css syntax - statements Venn diag.png)
+![css syntax - statements Venn diag](misc\css syntax - statements Venn diag.png)
 
 常见的条件声明有，`@document`，`@media`等
+
+#### 瀑布流模型（The cascade）
+
+直接使用英文可能更加恰当，`cascade` 指的是 `css`（cascade style sheet）的一种优先级算法。直接影响到最终哪一个样式会被采用。主要有三个方面决定样式的优先级：
+
+1. importance
+2. 具体程度（Specificity）
+3. 源码顺序（Source Order）
+
+影响力高低：importance > Specificity > Source Order
+
+##### importance
+
+- 忽略其他要素，一旦出现就表示该属性会被保留到最后
+- 如果同时有两个样式都出现了`important`，则后面的样式会被采用
+
+一般来说，`importance`是不会被使用到的，因为一旦出现就意味着你原有的`css`框架被破坏；另外，如果你的`css`样式嵌套很深，`importance`属性会大大的增加调试难度
+
+##### Specificity
+
+使用一些属性限制样式的范围，比如`id`、`class`等。Specificity使用一种得分算法来得出样式的优先级，大致如下:
+
+1. 1000: 直接内联到`html`的`style`属性上
+2. 100: `id` 选择器
+3. 10: `class` 选择器、`attribute`选择器、或者 通用选择器上的 `pseudo-class`
+4. 1: 普通的标签（如单纯的一个`h1`）或者 通用选择器上的 `pseudo-element` 
+
+| 得分 | 描述                                                         |                      |
+| ---- | ------------------------------------------------------------ | -------------------- |
+| 1000 | 直接内联到`html`的`style`属性上                              | <h1 style="xxx" ...> |
+| 100  | `id` 选择器                                                  |                      |
+| 10   | `class` 选择器、`attribute`选择器、或者 所有选择器上的 `pseudo-class` |                      |
+| 1    | 普通的标签 或者 所有选择器上的 `pseudo-element`              | `h1`                 |
+
+*注意：通用选择器（\*），选择器组合（+, >, ~, ' '），反向伪类（:not）不影响Specificity算法*
+
+##### Source Order
+
+按照在文档中出现的顺序，后者会覆盖前者，这个规则除了用于一般的标签判断外，同样适用于importance和Specificity出现相同优先级的情况
+
+*注意：cascade算法实现的颗粒度是属性级别的，也就是说同一个样式规则会出现部分被覆盖，而其余被采用的情况*
+
+##### 继承
+
+
+
