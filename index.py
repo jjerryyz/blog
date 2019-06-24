@@ -1,12 +1,14 @@
 import tornado.ioloop
 import tornado.web
 import os.path
+import markdown
 
 class Application(tornado.web.Application):
     # 在 __new__之后调用，创建对象后，在这里初始化对象
     def __init__(self):
         handler = [
             (r"/", HomeHandler),
+            (r"/compose", ComposeHandler),
             (r"/entry/([^/]+)", EntryHandler)
         ]
         settings = dict(
@@ -21,6 +23,18 @@ class Application(tornado.web.Application):
             debug=True,
         )
         super(Application, self).__init__(handler, **settings)
+
+class BaseHandler(tornado.web.RequestHandler):
+    pass
+
+class ComposeHandler(BaseHandler):
+    def get(self):
+        self.render('compose.html', entry={})
+
+    def post(self):
+        text = self.get_argument("markdown")
+        html = markdown.markdown
+        self.redirect("/entry/", slug=html)
 
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):

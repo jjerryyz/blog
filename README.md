@@ -366,6 +366,30 @@ app = tornado.web.Application([
   - 使用单一表达式`{{ ... }}`或`{% raw ... %}`
   - 只处理html部分的逃逸，js和css部分需另外处理，参考https://wonko.com/post/html-escaping
 
+#### 命令空间
+
+模板代码运行的环境将会隐含以下列表方法。
+
+*注意，框架使用`RequestHandler.render`和`render_string`处理模板代码，如果开发者在框架外单独使用`tornado.template`模块，很多列表中的方法将无法使用*
+
+- `escape`: alias for [`tornado.escape.xhtml_escape`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.xhtml_escape)
+- `xhtml_escape`: alias for [`tornado.escape.xhtml_escape`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.xhtml_escape)
+- `url_escape`: alias for [`tornado.escape.url_escape`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.url_escape)
+- `json_encode`: alias for [`tornado.escape.json_encode`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.json_encode)
+- `squeeze`: alias for [`tornado.escape.squeeze`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.squeeze)
+- `linkify`: alias for [`tornado.escape.linkify`](https://www.tornadoweb.org/en/stable/escape.html#tornado.escape.linkify)
+- `datetime`: the Python [`datetime`](https://docs.python.org/3.6/library/datetime.html#module-datetime) module
+- `handler`: the current [`RequestHandler`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler) object
+- `request`: alias for [`handler.request`](https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest)
+- `current_user`: alias for [`handler.current_user`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.current_user)
+- `locale`: alias for [`handler.locale`](https://www.tornadoweb.org/en/stable/locale.html#tornado.locale.Locale)
+- `_`: alias for [`handler.locale.translate`](https://www.tornadoweb.org/en/stable/locale.html#tornado.locale.Locale.translate)
+- `static_url`: alias for [`handler.static_url`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.static_url)
+- `xsrf_form_html`: alias for [`handler.xsrf_form_html`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.xsrf_form_html)
+- `reverse_url`: alias for [`Application.reverse_url`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.Application.reverse_url)
+- All entries from the `ui_methods` and `ui_modules` `Application` settings
+- Any keyword arguments passed to [`render`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.render) or [`render_string`](https://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.render_string)
+
 #### 国际化
 
 - `self.locale`可以获取到本地化相关详细
