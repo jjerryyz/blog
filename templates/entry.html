@@ -1,7 +1,11 @@
 {% extends "base.html" %}
-
+{% block head %}
+<link rel="stylesheet" href="{{ static_url("css/github-markdown.css") }}" type="text/css">
+{% end %}
 {% block body %}
-    <div class="inner">
-        {{markdown}}
+<div class="inner">
+    <div class="markdown-body">
+        {% module Entry(entry) %}
     </div>
+</div>
 {% end %}

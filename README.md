@@ -461,7 +461,44 @@ class BaseHandler(tornado.web.RequestHandler):
    {% module Entry(entry) %}
    ```
 
+#### 实例一: 渲染markdown
 
+- 使用`markdown`解析器解析输入的`markdown`文本，生成原生的html字符串
+
+- 使用`render_string`渲染原生的`html`字符串，并返回给UI modules
+
+  ```python
+  class EntryHandler(tornado.web.RequestHandler):
+      def get(self, slug):
+          html=...# 查询数据库得到原生的html字符串
+          self.render("entry.html", entry=html)
+  ```
+
+  同样可以直接使用`RequestHandler.render`达到目的，需要湖之一`RequestHandler.render`是渲染界面并响应给客户端
+
+- 在模板代码中使用 `{% raw html_raw %}`标识渲染的位置
+
+  `html_raw` 是原生的`html`字符串，`{% raw ... %}`起到的作用就是*不以转义的方式*把`html`字符串放到此处
+
+到这里，已经可以显示一个由markdown转换过来的html页面了，这个页面还比较淳朴，因为上面还没有应用任何主题，css样式也都没有进行调校过，现在我们为它加上github的主题
+
+- 加上主题实际上就是为页面应用github的css样式，从这个链接可以下载https://github.com/sindresorhus/github-markdown-css/blob/gh-pages/github-markdown.css
+
+- github的样式表都继承一个`markdown-body`的class，我们只需用一个具有`markdown-body`的class属性的div包括需要渲染的html代码即可
+
+  ```html
+  <!-- template/entry.html -->
+  <div class="markdown-body">
+      {% module Entry(entry) %}
+  </div>
+  
+  <!-- template/modules/entry.html -->
+  <div id="entry">
+      {% raw entry %}
+  </div>
+  ```
+
+  
 
 ## 部署与调试开关
 

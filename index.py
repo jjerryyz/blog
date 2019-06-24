@@ -1,7 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import os.path
-import markdown
+import mistune
 
 class Application(tornado.web.Application):
     # 在 __new__之后调用，创建对象后，在这里初始化对象
@@ -26,15 +26,16 @@ class Application(tornado.web.Application):
 
 class BaseHandler(tornado.web.RequestHandler):
     pass
-
+html = ""
 class ComposeHandler(BaseHandler):
     def get(self):
         self.render('compose.html', entry={})
 
     def post(self):
+        global html
         text = self.get_argument("markdown")
-        html = markdown.markdown
-        self.redirect("/entry/", slug=html)
+        html = mistune.markdown(text)
+        self.redirect("/entry/1")
 
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
@@ -43,10 +44,9 @@ class HomeHandler(tornado.web.RequestHandler):
 
 class EntryHandler(tornado.web.RequestHandler):
     def get(self, slug):
-        print(slug)
-        self.render("entry.html", markdown=slug)
+        global html
+        self.render("entry.html", entry=html)
 
-# 定义一个测试组件，仅仅打印 This is {{entry}}
 class EntryModule(tornado.web.UIModule):
     def render(self, entry):
         return self.render_string("modules/entry.html", entry=entry)
