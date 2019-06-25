@@ -37,10 +37,10 @@ python存在多个版本，不同的项目有时候需要不同的python版本�
 WSGI（Web Server Gateway Interface） 定义了 web 应用和 web 服务器之间的接口，tornado 没有实现 WSGI
 
 #### 线程安全
-tornado 不是线程安全的，唯一可以安全的从别的线程调用的方法是 IOLoop.add_callback; 还可以使用 IOLoop.run_in_executor 调用别的线程的阻塞方法，但要注意不要在传入 run_in_executor 的方法中引用任何 tornado对象
+`tornado` 不是线程安全的，唯一可以安全的从别的线程调用的方法是 `IOLoop.add_callback`; 还可以使用 `IOLoop.run_in_executor` 调用别的线程的阻塞方法，但要注意不要在传入 `run_in_executor` 的方法中引用任何 `tornado`对象
 
 #### asyncio
-tornado 使用 asyncio 作为异步 io 库
+`tornado` 使用 `asyncio` 作为异步 io 库
 
 #### 安装 toranado 环境
 `pip install tornado`
@@ -503,6 +503,12 @@ class BaseHandler(tornado.web.RequestHandler):
 ## 部署与调试开关
 
 - `autoreload=True`当代码修改后，自动重载程序
+
+
+
+## 工具
+
+#### tornado.options
 
 
 

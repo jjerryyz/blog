@@ -9,7 +9,7 @@
       <div class="collapse navbar-collapse" id="navcol-1">
         <ul class="nav navbar-nav ml-auto">
           <li class="nav-item" role="presentation"><a class="nav-link" href="#">存档</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link" href="#">打赏</a></li>
+          <li class="nav-item" role="presentation"><a class="nav-link" href="#">打赝</a></li>
         </ul>
       </div>
     </div>
@@ -19,7 +19,7 @@
 
 <ul class="list-group" style="margin: 52px;margin-left: 121px;margin-right: 111px;">
   {% for item in items %}
-    <li class="list-group-item list-group-item-action"><a style="font-size: 26px;" href="{{item['link']}}">{{item['title']}}<br></a></li>
+    <li class="list-group-item list-group-item-action"><a style="font-size: 26px;" href="/entry/{{ item['slug'] }}">{{item['title']}}<br></a></li>
   {% end %}
 </ul>
 {% end %}
