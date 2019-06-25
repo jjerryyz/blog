@@ -510,6 +510,24 @@ class BaseHandler(tornado.web.RequestHandler):
 
 #### tornado.options
 
+- 解析命令行参数或者配置文件参数
+- 允许设置默认值
+
+```python
+define("mysql_host", default="127.0.0.1:3306", help="Main user DB")
+define("memcache_hosts", default="127.0.0.1:11011", multiple=True,
+       help="Main user memcache servers")
+
+if __name__ == "__main__":
+    # 解析命令行
+    tornado.options.parse_command_line()
+    # 解析配置文件
+    tornado.options.parse_config_file()
+    ...
+    # 后续可以用点操作符直接访问
+    options.mysql_host
+```
+
 
 
 ## Bootstrap
@@ -698,9 +716,27 @@ css规定了一些值可以让我们去控制这些继承关系
 
 特别地，css还规定了`all`属性，可以对`all`属性应用`inherit`、`initial`、`unset`、`revert`
 
-#### 
+
 
 ## Mongodb
+
+#### 安装环境
+
+到官网下载*服务器*版本https://www.mongodb.com/download-center/community
+
+`注意：windows在安装引导部分一定要把mongodb Compass去掉，否则永远无法安装完成`
+
+#### 启动mongod服务
+
+新建一个目录存放数据库文件，比如`C:\data\db`
+
+把mongod执行程序加入环境变量，使用命令行启动
+
+```shell
+mongod --dbpath="C:\data\db"
+```
+
+
 
 
 
