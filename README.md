@@ -530,6 +530,15 @@ if __name__ == "__main__":
 
 
 
+## 授权与安全
+
+#### 用户授权
+
+- 框架内部调用`self.current_user`访问当前用户
+- 模板中调用`current_user`
+
+
+
 ## Bootstrap
 
 bootstrap4.1版本文档<https://getbootstrap.com/docs/4.1/layout/overview/>

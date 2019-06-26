@@ -5,9 +5,11 @@ import tornado.options
 import os.path
 import mistune
 import pymongo
+from bson.objectid import ObjectId
 from tornado.options import define, options
 import unicodedata
 import re
+import bcrypt
 
 define("db_port", default=27017, help="run on the given port", type=int)
 define("db_host", default="127.0.0.1", help="run on the given host")
@@ -23,39 +25,84 @@ class Application(tornado.web.Application):
         handler = [
             (r"/", HomeHandler),
             (r"/compose", ComposeHandler),
-            (r"/entry/([^/]+)", EntryHandler)
+            (r"/entry/([^/]+)", EntryHandler),
+            (r"/auth/login", AuthLoginHandler)
         ]
         settings = dict(
             blog_title=u"Tornado Blog",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
-            # xsrf_cookies=True,
-            # cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-            # login_url="/auth/login",
+            xsrf_cookies=True,
+            cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+            login_url="/auth/login",
             autoreload=True,
             debug=True,
         )
         super(Application, self).__init__(handler, **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
-    async def query(self):
-        return self.application.db['article'].find()
+    async def query(self, collection):
+        return self.application.db[collection].find()
 
-    async def query_one(self, myquery):
-        result = self.application.db['article'].find_one(myquery)
+    async def query_one(self, collection, myquery):
+        result = self.application.db[collection].find_one(myquery)
         if not result:
             raise NoResultError()
         else:
             return result
 
-    async def insert(self, mydict):
-        return self.application.db['article'].insert_one(mydict)
+    async def insert(self, collection, mydict):
+        return self.application.db[collection].insert_one(mydict)
+
+    # get_current_user 方法不支持异步请求，故而在prepare实现校验cookie的逻辑
+    async def prepare(self):
+        user_id = self.get_secure_cookie('blog_user')
+        if user_id:
+            user_id = str(tornado.escape.to_unicode(user_id))
+            # mongodb 查询时的id不是一个普通的字符串，使用的是 bson.objectid
+            user_id = ObjectId(ObjectId)
+            try: self.current_user = await self.query_one('user', {'_id': user_id})
+            except NoResultError: pass
+
+class AuthLoginHandler(BaseHandler):
+    async def get(self):
+        self.render('login.html', error=False)
+    
+    async def post(self):
+        email = self.get_argument('email')
+        password = self.get_argument('password')
+
+        try:
+            user = await self.query_one('user', {'email': email})
+        except NoResultError:
+            self.render('login.html', error='email not exists')
+            return
+
+        try:
+            hashed_password = await tornado.ioloop.IOLoop.current().run_in_executor(
+                None,
+                bcrypt.hashpw,
+                tornado.escape.utf8(password),
+                tornado.escape.utf8(user['password'])
+            )
+        except ValueError:
+            self.render('login.html', error='incorrect password')
+            return
+        hashed_password = tornado.escape.to_unicode(hashed_password)
+        if user['password'] == hashed_password:
+            id = str(user['_id'])
+            self.set_secure_cookie('blog_user', id)
+            self.redirect(self.get_argument('next', '/'))
+        else:
+            self.render('login.html', error='incorrect password')
 
 class ComposeHandler(BaseHandler):
+    @tornado.web.authenticated
     async def get(self):
         self.render('compose.html', entry={})
 
+    @tornado.web.authenticated
     async def post(self):
         title = self.get_argument('title')
         text = self.get_argument("markdown")
@@ -68,19 +115,19 @@ class ComposeHandler(BaseHandler):
         if not slug:
             slug = "entry"
 
-        await self.insert({'title': title, 'slug': slug, 'html': html})
+        await self.insert('article', {'title': title, 'slug': slug, 'html': html})
         self.redirect("/entry/" + slug)
 
 class HomeHandler(BaseHandler):
     async def get(self):
-        items = await self.query()
+        items = await self.query('article')
         if not items or items.count() == 0:
             raise tornado.web.HTTPError(404)
         self.render('home.html', items=items)
 
 class EntryHandler(BaseHandler):
     async def get(self, slug):
-        query = await self.query_one({'slug': slug}) 
+        query = await self.query_one('article', {'slug': slug}) 
         self.render("entry.html", entry=query['html'])
    
 class EntryModule(tornado.web.UIModule):
