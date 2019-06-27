@@ -2,10 +2,13 @@
   font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
 }
 
-body {
-}
-
 .list-group-item {
   font-size: 26px;
+}
+
+div.inner {
+  margin: 0% 14%;
+  padding: 2% 8% 4% 8%;
+  border: 1px solid LightGrey;
 }
 

@@ -24,7 +24,8 @@ class Application(tornado.web.Application):
         self.db = db
         handler = [
             (r"/", HomeHandler),
-            (r"/compose", ComposeHandler),
+            (r"/compose/([^/]+)", ComposeHandler),
+            (r"/manage", ArticleManageHandler),
             (r"/entry/([^/]+)", EntryHandler),
             (r"/auth/login", AuthLoginHandler)
         ]
@@ -42,6 +43,12 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handler, **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
+    async def raw_to_obj(self, dictdata):
+        obj = tornado.util.ObjectDict()
+        for k in dictdata.keys():
+            obj[k] = dictdata[k]
+        return obj
+
     async def query(self, collection):
         return self.application.db[collection].find()
 
@@ -64,6 +71,21 @@ class BaseHandler(tornado.web.RequestHandler):
             user_id = ObjectId(user_id)
             try: self.current_user = await self.query_one('user', {'_id': user_id})
             except NoResultError: pass
+
+class ArticleManageHandler(BaseHandler):
+
+    async def onclick(self):
+        print('onclick')
+
+    @tornado.web.authenticated
+    async def get(self):
+        try:
+            articles = await self.query('article')
+            print('articles', articles)
+        except Exception:
+            raise tornado.web.HTTPError(404)
+
+        self.render('manage.html', articles=articles)
 
 class AuthLoginHandler(BaseHandler):
     async def get(self):
@@ -99,13 +121,21 @@ class AuthLoginHandler(BaseHandler):
 
 class ComposeHandler(BaseHandler):
     @tornado.web.authenticated
-    async def get(self):
-        self.render('compose.html', entry={})
+    async def get(self, slug):
+        if int(slug) == 0:
+            self.render('compose.html', entry={})
+            return
+        try:
+            entry = await self.query_one('article', {'slug': slug})
+            self.render('compose.html', entry=entry)
+        except Exception:
+            pass
 
     @tornado.web.authenticated
-    async def post(self):
+    async def post(self, slug):
         title = self.get_argument('title')
         text = self.get_argument("markdown")
+        id = self.get_argument('id')
         html = mistune.markdown(text)
 
         slug = unicodedata.normalize("NFKD", title)
@@ -114,7 +144,7 @@ class ComposeHandler(BaseHandler):
         slug = slug.encode("ascii", "ignore").decode("ascii")
         if not slug:
             slug = "entry"
-
+        
         await self.insert('article', {'title': title, 'slug': slug, 'html': html})
         self.redirect("/entry/" + slug)
 

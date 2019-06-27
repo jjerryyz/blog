@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="inner">
+    <ul class="list-group">
+        {% for article in articles %}
+        <li value="{{article['slug']}}" class="list-group-item">
+            <span>{{article['title']}}</span>
+            <button class="btn btn-danger text-right float-right" id="delete" type="button">删除</button>
+            <button class="btn btn-primary text-right float-right" id="edit" type="button" style="margin-right: 36px;">编辑</button>
+        </li>
+        {% end %}
+    </ul>
+</div>
+
+{% end %}
+
+{% block bottom %}
+<script type="text/javascript">
+    //<![CDATA[
+  
+    $(function() {
+        $("button#edit").click(function() {
+            var slug = $(this).parent().attr('value')
+            window.location.href="../compose/"+slug
+        })
+        $("button#delete").click(function() {
+            var slug = $(this).parent().attr('value')
+            
+        })
+    });
+  
+    //]]>
+    </script>
+{% end %}
