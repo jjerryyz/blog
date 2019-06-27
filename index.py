@@ -61,7 +61,7 @@ class BaseHandler(tornado.web.RequestHandler):
         if user_id:
             user_id = str(tornado.escape.to_unicode(user_id))
             # mongodb 查询时的id不是一个普通的字符串，使用的是 bson.objectid
-            user_id = ObjectId(ObjectId)
+            user_id = ObjectId(user_id)
             try: self.current_user = await self.query_one('user', {'_id': user_id})
             except NoResultError: pass
 
