@@ -4,8 +4,8 @@
 <div class="inner">
     <ul class="list-group">
         {% for article in articles %}
-        <li value="{{article['slug']}}" class="list-group-item">
-            <span>{{article['title']}}</span>
+        <li value="{{article.slug}}" class="list-group-item">
+            <span>{{article.title}}</span>
             <button class="btn btn-danger text-right float-right" id="delete" type="button">删除</button>
             <button class="btn btn-primary text-right float-right" id="edit" type="button" style="margin-right: 36px;">编辑</button>
         </li>

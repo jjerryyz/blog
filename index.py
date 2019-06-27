@@ -43,21 +43,21 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handler, **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
-    async def raw_to_obj(self, dictdata):
+    def raw_to_obj(self, dictdata):
         obj = tornado.util.ObjectDict()
         for k in dictdata.keys():
             obj[k] = dictdata[k]
         return obj
 
     async def query(self, collection):
-        return self.application.db[collection].find()
+        return [self.raw_to_obj(row) for row in self.application.db[collection].find()]
 
     async def query_one(self, collection, myquery):
         result = self.application.db[collection].find_one(myquery)
         if not result:
             raise NoResultError()
         else:
-            return result
+            return self.raw_to_obj(result)
 
     async def insert(self, collection, mydict):
         return self.application.db[collection].insert_one(mydict)
@@ -112,8 +112,8 @@ class AuthLoginHandler(BaseHandler):
             self.render('login.html', error='incorrect password')
             return
         hashed_password = tornado.escape.to_unicode(hashed_password)
-        if user['password'] == hashed_password:
-            id = str(user['_id'])
+        if user.password == hashed_password:
+            id = str(user._id)
             self.set_secure_cookie('blog_user', id)
             self.redirect(self.get_argument('next', '/'))
         else:
@@ -151,14 +151,14 @@ class ComposeHandler(BaseHandler):
 class HomeHandler(BaseHandler):
     async def get(self):
         items = await self.query('article')
-        if not items or items.count() == 0:
+        if not items or len(items) == 0:
             raise tornado.web.HTTPError(404)
         self.render('home.html', items=items)
 
 class EntryHandler(BaseHandler):
     async def get(self, slug):
         query = await self.query_one('article', {'slug': slug}) 
-        self.render("entry.html", entry=query['html'])
+        self.render("entry.html", entry=query.html)
    
 class EntryModule(tornado.web.UIModule):
     def render(self, entry):
