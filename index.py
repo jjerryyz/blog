@@ -151,7 +151,7 @@ async def main():
 
     db = await create_db_connection()
     app = Application(db)
-    app.listen(8888)
+    app.listen(80)
 
     # 程序会等待 Ctrl-C 事件，收到事件后退出
     # 也可以调用 shutdown_event.set() 暴力退出
