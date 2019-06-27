@@ -29,7 +29,7 @@ class Application(tornado.web.Application):
             (r"/auth/login", AuthLoginHandler)
         ]
         settings = dict(
-            blog_title=u"Tornado Blog",
+            blog_title=u"Jerry Blog",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
@@ -136,8 +136,6 @@ class EntryModule(tornado.web.UIModule):
 
 async def create_db_connection():
     myclient = pymongo.MongoClient("mongodb://{}:{}/".format(options.db_host, options.db_port))
-    if options.db_name in myclient.list_database_names():
-        print("{} db exist".format(options.db_name))
     db = myclient[options.db_name]
     # 创建索引，保证 article 表中的 slug 唯一
     db['article'].create_index([('slug', pymongo.ASCENDING)], unique=True)
