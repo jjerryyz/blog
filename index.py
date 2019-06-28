@@ -25,9 +25,9 @@ class Application(tornado.web.Application):
         handler = [
             (r"/", HomeHandler),
             (r"/compose/([^/]+)", ComposeHandler),
-            (r"/manage", ArticleManageHandler),
             (r"/entry/([^/]+)", EntryHandler),
-            (r"/auth/login", AuthLoginHandler)
+            (r"/auth/login", AuthLoginHandler),
+            (r"/auth/manage", ManageHandler),
         ]
         settings = dict(
             blog_title=u"Jerry Blog",
