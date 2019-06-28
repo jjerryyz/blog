@@ -62,6 +62,10 @@ class BaseHandler(tornado.web.RequestHandler):
     async def insert(self, collection, mydict):
         return self.application.db[collection].insert_one(mydict)
 
+    async def update(self, collection, filter, mydict):
+        # 使用新的mydict更新记录，如果找不到则插入一条新的记录
+        return self.application.db[collection].find_one_and_update(filter,{'$set': mydict},upsert=True)
+
     # get_current_user 方法不支持异步请求，故而在prepare实现校验cookie的逻辑
     async def prepare(self):
         user_id = self.get_secure_cookie('blog_user')
@@ -122,7 +126,7 @@ class AuthLoginHandler(BaseHandler):
 class ComposeHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self, slug):
-        if int(slug) == 0:
+        if slug == 'new':
             self.render('compose.html', entry={})
             return
         try:
@@ -134,18 +138,16 @@ class ComposeHandler(BaseHandler):
     @tornado.web.authenticated
     async def post(self, slug):
         title = self.get_argument('title')
-        text = self.get_argument("markdown")
-        id = self.get_argument('id')
-        html = mistune.markdown(text)
+        slug = self.get_argument('slug')
+        markdown = self.get_argument("markdown")
 
-        slug = unicodedata.normalize("NFKD", title)
-        slug = re.sub(r"[^\w]+", " ", slug)
-        slug = "-".join(slug.lower().strip().split())
-        slug = slug.encode("ascii", "ignore").decode("ascii")
-        if not slug:
-            slug = "entry"
-        
-        await self.insert('article', {'title': title, 'slug': slug, 'html': html})
+        # slug = unicodedata.normalize("NFKD", title)
+        # slug = re.sub(r"[^\w]+", " ", slug)
+        # slug = "-".join(slug.lower().strip().split())
+        # slug = slug.encode("ascii", "ignore").decode("ascii")
+        # if not slug:
+        #     slug = "entry"
+        await self.update('article',{'slug': slug}, {'title': title, 'slug': slug, 'markdown': markdown})
         self.redirect("/entry/" + slug)
 
 class HomeHandler(BaseHandler):
@@ -158,7 +160,8 @@ class HomeHandler(BaseHandler):
 class EntryHandler(BaseHandler):
     async def get(self, slug):
         query = await self.query_one('article', {'slug': slug}) 
-        self.render("entry.html", entry=query.html)
+        html = mistune.markdown(query.markdown)
+        self.render("entry.html", entry=html)
    
 class EntryModule(tornado.web.UIModule):
     def render(self, entry):
