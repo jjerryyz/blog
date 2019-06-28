@@ -8,8 +8,13 @@
           class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navcol-1">
         <ul class="nav navbar-nav ml-auto">
+          {% if current_user %}
+            <li class="nav-item" role="presentation"><a class="nav-link" href="/manage">管理</a></li>
+          {% end %}
           <li class="nav-item" role="presentation"><a class="nav-link" href="#">存档</a></li>
+          {% if not current_user %}
           <li class="nav-item" role="presentation"><a class="nav-link" href="#">打赏</a></li>
+          {% end %}
         </ul>
       </div>
     </div>
