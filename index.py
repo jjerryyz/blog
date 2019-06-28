@@ -65,6 +65,9 @@ class BaseHandler(tornado.web.RequestHandler):
     async def update(self, collection, filter, mydict):
         # 使用新的mydict更新记录，如果找不到则插入一条新的记录
         return self.application.db[collection].find_one_and_update(filter,{'$set': mydict},upsert=True)
+    
+    async def delete(self, collection, filter):
+        return self.application.db[collection].delete_one(filter)
 
     # get_current_user 方法不支持异步请求，故而在prepare实现校验cookie的逻辑
     async def prepare(self):
@@ -76,20 +79,30 @@ class BaseHandler(tornado.web.RequestHandler):
             try: self.current_user = await self.query_one('user', {'_id': user_id})
             except NoResultError: pass
 
-class ArticleManageHandler(BaseHandler):
-
-    async def onclick(self):
-        print('onclick')
-
+class ManageHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self):
         try:
             articles = await self.query('article')
-            print('articles', articles)
         except Exception:
             raise tornado.web.HTTPError(404)
 
         self.render('manage.html', articles=articles)
+    
+    @tornado.web.authenticated
+    async def post(self):
+        action = self.get_argument('action')
+        slug = self.get_argument('slug')
+        if not slug:
+            return tornado.web.HTTPError(500)
+        if action == 'delete':
+            result = await self.delete('article', {'slug': slug})
+            if result is not None:
+                self.write('ok')
+            else:
+                self.write('error')
+        else:
+            await tornado.web.HTTPError(404)
 
 class AuthLoginHandler(BaseHandler):
     async def get(self):

@@ -18,7 +18,7 @@
 {% block bottom %}
 <script type="text/javascript">
     //<![CDATA[
-  
+    
     $(function() {
         $("button#edit").click(function() {
             var slug = $(this).parent().attr('value')
@@ -26,7 +26,9 @@
         })
         $("button#delete").click(function() {
             var slug = $(this).parent().attr('value')
-            
+            $.postJSON(window.location.href, {'action': 'delete', 'slug': slug}, function() {
+                window.location.reload()
+            })
         })
     });
   

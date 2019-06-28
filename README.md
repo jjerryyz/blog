@@ -537,6 +537,10 @@ if __name__ == "__main__":
 - 框架内部调用`self.current_user`访问当前用户
 - 模板中调用`current_user`
 
+#### 跨域请求欺骗（XSRF）保护
+
+
+
 
 
 ## Bootstrap

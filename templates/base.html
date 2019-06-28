@@ -8,6 +8,25 @@
     <link rel="stylesheet" href="{{ static_url("css/styles.css") }}" type="text/css">
     <link rel="alternate" href="/feed" type="application/atom+xml" title="{{ escape(handler.settings["blog_title"]) }}">
     <script src="{{ static_url("js/jquery.min.js") }}"></script>
+
+    <!-- 处理tornado跨域请求的钩子 -->
+    <script type="text/javascript">
+      //<![CDATA[
+      function getCookie(name) {
+          var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+          return r ? r[1] : undefined;
+      }
+
+      jQuery.postJSON = function(url, args, callback) {
+          args._xsrf = getCookie("_xsrf");
+          $.ajax({url: url, data: $.param(args), dataType: "text", type: "POST",
+              success: function(response) {
+              callback(eval("(" + response + ")"));
+          }});
+      };
+      //]]>
+    </script>
+
     <script src="{{ static_url("bootstrap/js/bootstrap.min.js") }}"></script>
     {% block head %}{% end %}
   </head>
