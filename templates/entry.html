@@ -4,8 +4,27 @@
 {% end %}
 {% block body %}
 <div class="inner">
+    {% if current_user %}
+    <button id="edit" type="button" class="btn btn-light" style="float: right"><i class="fas fa-edit"></i></button>
+    {% end %}
     <div class="markdown-body">
         {% module Entry(entry) %}
     </div>
 </div>
+{% end %}
+
+{% block bottom %}
+<script type="text/javascript">
+    //<![CDATA[
+    
+    $(function() {
+        $("button#edit").click(function() {
+            var array = window.location.href.split('/')
+            var slug = array[array.length-1]
+            window.location.href="../compose/"+slug
+        })
+    });
+  
+    //]]>
+    </script>
 {% end %}
