@@ -787,7 +787,81 @@ mongod --dbpath="C:\data\db"
 
 4. 本地启动自己搭建的htp服务，此时我们就可以通过上一步获取到的 http://ab4xxx.ngrok.io  访问到本地的http服务了
 
-   
+
+
+
+## 部署
+
+#### nginx转发端口80到自定端口
+
+浏览器访问域名时，如果不带端口，默认访问的是80端口，为了方便用户访问，我们当然也希望服务器这边启动的程序监听的是80端口。
+
+然而服务器对1024以下的端口处于安全考虑，一般都只允许管理员使用，我们不希望使用管理员权限去执行博客程序，作为一种取巧的手段，可以使用`nginx`将80端口映射到自定义的端口，从浏览器访问服务器的角度，我们一般吧这种行为叫做**反向代理**
+
+##### 安装
+
+`sudo apt update`
+
+`sudo apt install nginx`
+
+##### 配置nginx转发端口
+
+假设我们想要反向代理的端口是8080，为了快速体现效果，直接修改默认配置文件 `/etc/nginx/sites-available/default`
+
+```nginx
+server {
+    # 启动nginx服务器监听80端口
+    listen 80 default_server;
+    listen [::]:80 default_server;
+	...
+    location / {
+                    # First attempt to serve request as file, then
+                    # as directory, then fall back to displaying a 404.
+                    # try_files $uri $uri/ =404;
+					# 配置转发到 8080
+                    proxy_pass http://127.0.0.1:8080/;
+                    proxy_read_timeout 300;
+                    proxy_connect_timeout 300;
+                    proxy_redirect     off;
+
+                    proxy_set_header   X-Forwarded-Proto $scheme;
+                    proxy_set_header   Host              $http_host;
+                    proxy_set_header   X-Real-IP         $remote_addr;
+            }
+	... 
+```
+
+
+
+#### pm2管理进程
+
+我们的博客程序需要在服务器上长时间运行，pm2可以帮助我们管理进程的所有方面，包括追踪日志，自动重启等操作
+
+##### 安装
+
+pm2依赖于nodejs
+
+`curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -`
+
+`sudo apt-get install -y nodejs`
+
+安装pm2
+
+`sudo npm install pm2 -g`
+
+##### 启动应用
+
+`pm2 start` 
+
+配置pm2开机自启，并且将我们的博客程序加入pm2的自启名单中
+
+`pm2 startup`
+
+save 方法会保存当前已经用`pm2`启动的程序到自启动名单
+
+`pm2 save`
+
+
 
 ## 其他
 

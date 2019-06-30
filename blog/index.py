@@ -11,6 +11,7 @@ import unicodedata
 import re
 import bcrypt
 
+define("server_port", default=8080, help="run on the given server port", type=int)
 define("db_port", default=27017, help="run on the given port", type=int)
 define("db_host", default="127.0.0.1", help="run on the given host")
 define("db_name", default="jj_blog", help="blog database name")
@@ -195,7 +196,7 @@ async def main():
 
     db = await create_db_connection()
     app = Application(db)
-    app.listen(80)
+    app.listen(options.server_port)
 
     # 程序会等待 Ctrl-C 事件，收到事件后退出
     # 也可以调用 shutdown_event.set() 暴力退出
