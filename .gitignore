@@ -103,10 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
-
-# custom
-*.bsdesign
-
-libs/tornado
 .vscode
+misc/script
+misc/bsdesign

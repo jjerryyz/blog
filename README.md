@@ -1,5 +1,7 @@
 # 从0开始搭建tornado博客
 
+2019.06.29
+
 
 
 官方文档地址：<https://www.tornadoweb.org/en/stable/>
@@ -656,7 +658,7 @@ CSS包含两种语句，
 
 只有在这两种集合的语句中才是有效的，还有一种集合，只有在特定的情况下才会生效的语句，我们称之为条件组（the conditional group rules），如下图
 
-![css syntax - statements Venn diag](misc\css syntax - statements Venn diag.png)
+![css syntax - statements Venn diag](http://image-jj-blog.test.upcdn.net/css_statement.png)
 
 常见的条件声明有，`@document`，`@media`等
 
@@ -756,6 +758,36 @@ mongod --dbpath="C:\data\db"
 #### 索引
 
 
+
+## 图片服务器
+
+建议使用第三方公共服务，他们提供稳定的cdn加速，和一些图片客制化要求
+
+国内比较常用的就是又拍云和七牛云，都有支持的人群，现在貌似又拍云比较多人用
+
+
+
+## 内网穿透
+
+在我们网站发布到正式外网服务器之前，有时候想要做一些发布测试，允许别人浏览，ngrok可以快捷的实现一个内网穿透
+
+1. 开发者 `ngrok` 官网 https://ngrok.com/ 注册账号并下载客户端
+
+2. 本地申请授权
+
+   `./ngrok authtoken <注册账号之后可以拿到的authtoken>`
+
+3. 本地启动ngrok服务
+
+   `./ngrok http 80`
+
+   会有类似的请求转发日志打印
+
+   `Forwarding                    http://ab4xxx.ngrok.io -> http://localhost:80`
+
+4. 本地启动自己搭建的htp服务，此时我们就可以通过上一步获取到的 http://ab4xxx.ngrok.io  访问到本地的http服务了
+
+   
 
 ## 其他
 
