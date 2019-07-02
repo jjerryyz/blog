@@ -106,9 +106,18 @@ class ManageHandler(BaseHandler):
             else:
                 self.write('error')
         elif action == 'sync_with_git':
-            subprocess.call('git status', shell=True)
+            # 创建子进程执行 git status命令，并且重定向到标准输出
+            p = subprocess.Popen('git pull', stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             self.write('ok')
-            pass
+            # while p.poll() is None:
+            #     line = p.stdout.readline()
+            #     line = line.strip()
+            #     if line:
+            #         print('subprocess: ' + str(line))
+            # if p.returncode == 0:
+            #     self.write('ok')
+            # else:
+            #     self.write('not_sync')
         else:
             await tornado.web.HTTPError(404)
 
