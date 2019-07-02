@@ -10,6 +10,7 @@ from tornado.options import define, options
 import unicodedata
 import re
 import bcrypt
+import subprocess
 
 define("server_port", default=8080, help="run on the given server port", type=int)
 define("db_port", default=27017, help="run on the given port", type=int)
@@ -93,15 +94,21 @@ class ManageHandler(BaseHandler):
     @tornado.web.authenticated
     async def post(self):
         action = self.get_argument('action')
-        slug = self.get_argument('slug')
-        if not slug:
-            return tornado.web.HTTPError(500)
+       
         if action == 'delete':
+            slug = self.get_argument('slug')
+            if not slug:  
+                return tornado.web.HTTPError(500)
+
             result = await self.delete('article', {'slug': slug})
             if result is not None:
                 self.write('ok')
             else:
                 self.write('error')
+        elif action == 'sync_with_git':
+            subprocess.call('git status', shell=True)
+            self.write('ok')
+            pass
         else:
             await tornado.web.HTTPError(404)
 

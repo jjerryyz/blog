@@ -7,6 +7,7 @@
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav ml-auto">
             <li class="nav-item" role="presentation"><a class="nav-link" href="/compose/new">新建</a></li>
+            <li id="sync" class="nav-item" role="presentation"><a class="nav-link" href="#">同步</a></li>
             <li class="nav-item" role="presentation"><a class="nav-link" href="#">存档</a></li>
             </ul>
         </div>
@@ -42,6 +43,11 @@
             var slug = $(this).parent().attr('value')
             $.postJSON(window.location.href, {'action': 'delete', 'slug': slug}, function() {
                 window.location.reload()
+            })
+        })
+        $("li#sync").click(function() {
+            $.postJSON(window.location.href, {'action': 'sync_with_git'}, function() {
+                console.log('ok')
             })
         })
     });
