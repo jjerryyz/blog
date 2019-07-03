@@ -11,11 +11,15 @@ import unicodedata
 import re
 import bcrypt
 import subprocess
+from toc import TocMixin
 
 define("server_port", default=8080, help="run on the given server port", type=int)
 define("db_port", default=27017, help="run on the given port", type=int)
 define("db_host", default="127.0.0.1", help="run on the given host")
 define("db_name", default="jj_blog", help="blog database name")
+
+class TocRenderer(TocMixin, mistune.Renderer):
+    pass
 
 class NoResultError(Exception):
     pass
@@ -191,11 +195,18 @@ class EntryHandler(BaseHandler):
     async def get(self, slug):
         query = await self.query_one('article', {'slug': slug}) 
         html = mistune.markdown(query.markdown)
-        self.render("entry.html", entry=html)
+
+        toc = TocRenderer()
+        md = mistune.Markdown(renderer=toc)
+        toc.reset_toc()
+        md.parse(query.markdown)
+        rv = toc.render_toc(level=3)
+
+        self.render("entry.html", entry=html, toc=rv)
    
 class EntryModule(tornado.web.UIModule):
-    def render(self, entry):
-        return self.render_string("modules/entry.html", entry=entry)
+    def render(self, entry, toc):
+        return self.render_string("modules/entry.html", entry=entry, toc=toc)
 
 async def create_db_connection():
     myclient = pymongo.MongoClient("mongodb://{}:{}/".format(options.db_host, options.db_port))
