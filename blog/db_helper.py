@@ -7,17 +7,19 @@ import tornado.options
 from tornado.options import define, options
 import sys
 
-define("email", default='admin', help="account")
+define("action",default='', help="action")
+define("user",default='admin', help="account")
 define("password", default='123456', help="password")
 
 myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
 db = myclient.jj_blog
 
-def create_admin():
+def create_user():
+    print('user:', options.user, 'password: ', options.password)
     password = bcrypt.hashpw(tornado.escape.utf8(options.password), bcrypt.gensalt())
     password = tornado.escape.to_unicode(password)
-    db.user.create_index([('email', pymongo.ASCENDING)], unique=True)
-    result = db.user.insert_one({'email': options.email, 'password': password})
+    db.user.create_index([('user', pymongo.ASCENDING)], unique=True)
+    result = db.user.insert_one({'user': options.user, 'password': password})
     print(result)
 
 def drop_user():
@@ -30,14 +32,13 @@ def drop_articles():
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
-    action = sys.argv[1]
+    print('action: ', options.action)
     try: 
-        print('action: ', action)
-        if action == 'create':
-            create_admin()
-        elif action == "drop_user":
+        if options.action == 'create_user':
+            create_user()
+        elif options.action == "drop_user":
             drop_user()
-        elif action == 'drop_article':
+        elif options.action == 'drop_article':
             drop_articles()
     except Exception:
         pass

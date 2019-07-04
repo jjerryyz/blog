@@ -132,13 +132,13 @@ class AuthLoginHandler(BaseHandler):
         self.render('login.html', error=False)
     
     async def post(self):
-        email = self.get_argument('email')
+        user = self.get_argument('user')
         password = self.get_argument('password')
 
         try:
-            user = await self.query_one('user', {'email': email})
+            user = await self.query_one('user', {'user': user})
         except NoResultError:
-            self.render('login.html', error='email not exists')
+            self.render('login.html', error='user not exists')
             return
 
         try:
