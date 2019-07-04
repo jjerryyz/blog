@@ -737,6 +737,18 @@ css规定了一些值可以让我们去控制这些继承关系
 
 
 
+## SCSS
+
+有编程功能的CSS
+
+#### 安装
+
+```powershell
+choco install sass
+```
+
+
+
 ## Mongodb
 
 #### 安装环境

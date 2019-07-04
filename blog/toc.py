@@ -48,7 +48,7 @@ class TocMixin(object):
         first_level = 0
         last_level = 0
 
-        yield '<ul id="table-of-content">\n'
+        yield '<ul id="table-of-content" class="section-nav">\n'
 
         for toc in self.toc_tree:
             index, text, l, raw = toc
@@ -61,19 +61,19 @@ class TocMixin(object):
                 # based on first level
                 first_level = l
                 last_level = l
-                yield '<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield '<li class="toc-entry toc-h%d"><a href="#toc-%d">%s</a>' % (index,index, text)
             elif last_level == l:
-                yield '</li>\n<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield '</li>\n<li class="toc-entry toc-h%d"><a href="#toc-%d">%s</a>' % (index,index, text)
             elif last_level == l - 1:
                 last_level = l
-                yield '<ul>\n<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield '<ul>\n<li class="toc-entry toc-h%d"><a href="#toc-%d">%s</a>' % (index,index, text)
             elif last_level > l:
                 # close indention
                 yield '</li>'
                 while last_level > l:
                     yield '</ul>\n</li>\n'
                     last_level -= 1
-                yield '<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield '<li class="toc-entry toc-h%d"><a href="#toc-%d">%s</a>' % (index,index, text)
 
         # close tags
         yield '</li>\n'

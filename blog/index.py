@@ -194,19 +194,19 @@ class HomeHandler(BaseHandler):
 class EntryHandler(BaseHandler):
     async def get(self, slug):
         query = await self.query_one('article', {'slug': slug}) 
-        html = mistune.markdown(query.markdown)
 
         toc = TocRenderer()
         md = mistune.Markdown(renderer=toc)
         toc.reset_toc()
-        md.parse(query.markdown)
+        html = md.parse(query.markdown)
+        # level 是展开的级数
         rv = toc.render_toc(level=3)
 
         self.render("entry.html", entry=html, toc=rv)
    
 class EntryModule(tornado.web.UIModule):
-    def render(self, entry, toc):
-        return self.render_string("modules/entry.html", entry=entry, toc=toc)
+    def render(self, entry):
+        return self.render_string("modules/entry.html", entry=entry)
 
 async def create_db_connection():
     myclient = pymongo.MongoClient("mongodb://{}:{}/".format(options.db_host, options.db_port))

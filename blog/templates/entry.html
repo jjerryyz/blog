@@ -1,14 +1,26 @@
 {% extends "base.html" %}
 {% block head %}
 <link rel="stylesheet" href="{{ static_url("css/github-markdown.css") }}" type="text/css">
+<link rel="stylesheet" href="{{ static_url("css/sidebar.css") }}" type="text/css">
 {% end %}
 {% block body %}
 <div class="inner">
-    {% if current_user %}
-    <button id="edit" type="button" class="btn btn-light" style="float: right"><i class="fas fa-edit"></i></button>
-    {% end %}
-    <div class="markdown-body">
-        {% module Entry(entry, toc) %}
+   
+    <div class="row">
+        <div class="col-sm"></div>
+        {% if current_user %}
+        <button id="edit" type="button" class="btn btn-light" style="float: right;margin-right: 20px"><i class="fas fa-edit"></i></button>
+        {% end %}
+        <button id="menu" type="button" class="btn btn-light" style="float: right"><i class="fas fa-bars"></i></button>
+    </div>
+  
+    <div class="row flex-xl-nowrap">
+        <div class="markdown-body">
+            {% module Entry(entry) %}
+        </div>
+        <div id="toc" class="d-none d-xl-block col-xl-3 bd-toc">
+            {% raw toc %}
+        </div>
     </div>
 </div>
 {% end %}
@@ -22,6 +34,9 @@
             var array = window.location.href.split('/')
             var slug = array[array.length-1]
             window.location.href="../compose/"+slug
+        })
+        $("button#menu").click(function() {
+           $("#toc").toggleClass('active')
         })
     });
   
