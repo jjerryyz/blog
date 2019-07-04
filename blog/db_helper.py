@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import bcrypt
 import pymongo
 import tornado.escape
