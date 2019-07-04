@@ -747,6 +747,12 @@ css规定了一些值可以让我们去控制这些继承关系
 choco install sass
 ```
 
+#### 使用
+
+```
+sass <sass源文件> <生成的css文件>
+```
+
 
 
 ## Mongodb
