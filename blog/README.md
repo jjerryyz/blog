@@ -881,6 +881,59 @@ save 方法会保存当前已经用`pm2`启动的程序到自启动名单
 
 
 
+## 可见即可得的markdown编辑器
+
+为了方便的添加修改我的博客，在管理页面下我需要一个编辑器，这个编辑器应该要满足以下几点:
+
+- 真正的可见即可得（不是实时预览）
+- 使用markdown语法
+- 最好有一定的离线保存能力
+
+一番搜索后，找到一个开源的富文本编辑器比较符合我的要求，附上链接https://github.com/wangfupeng1988/wangEditor/
+
+这个编辑器已经可以满足我的第一点需求，它的富文本解析不是用markdown的，我需要稍作修改，首先我们对这个库的工程结构做个了解:
+
+- 是一个 node 工程
+- 使用 gulp 作为任务管理器
+- 代码符合某种包管理规范
+
+有了这些信息，我们就可以先将工程编译测试一下，
+
+### gulp
+
+gulp 是我第一次接触的框架，它本身比较容易理解，就是管理编辑任务的，我们只需在工程底下新建一个 gulpfile.js，然后执行 gulp 就可以开始任务了
+
+[官方文档](https://gulpjs.com/docs/en/api/task)
+
+一般会配置一个叫default的任务，监听所有关心的文件变化，并在文件变化时执行编译工作
+
+```javascript
+// 默认任务配置
+gulp.task('default', () => {
+    gulp.task('copy-fonts', series(copyFontTask,cssTask, scriptTask))
+    // 监听 js 原始文件的变化
+    gulp.watch('./src/js/**/*.js', scriptTask)
+    // 监听 css 原始文件的变化
+    gulp.watch('./src/less/**/*.less', series(cssTask, scriptTask))
+    // 监听 icon.less 的变化，变化时重新拷贝 fonts 文件
+    gulp.watch('./src/less/icon.less', copyFontTask)
+})
+```
+
+- copyFontTask、cssTask等是自己定义的任务
+
+- 如果需要注册多个任务，用上 series
+
+- 使用命令行执行任务
+
+  ```powershell
+  gulp <任务名>
+  ```
+
+  
+
+
+
 ## 其他
 
 #### \<![CDATA[...]]\>
