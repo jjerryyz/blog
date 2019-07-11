@@ -947,7 +947,7 @@ slate是一个有使命感的开源库，作者对于网上几种富文本编辑
 - 仓库本身很庞大（monolithic）而无法分割（耦合性太强）
 - 无法或者很难编辑复杂的 documents（比如tables、embeds）
 
-### Principles
+#### Principles
 
 slate对上述问题给出的答案是:
 
@@ -959,6 +959,28 @@ slate对上述问题给出的答案是:
 - 按照直觉的方式编辑documents（intuitive changes）
 - 为协同编辑设计的数据结构
 - 消除核心与插件的边界，模糊核心与插件之间的差别
+
+#### React
+
+slate使用React作为渲染框架，这直接限定了我们选择其他部件的可能。
+
+- React 不能很好的仅嵌入一个script标签到web中（如果只是只是想想练习一下React，[有方法可以做到](https://reactjs.org/docs/add-react-to-a-website.html)）
+- React 的几种工具链几乎都是针对单页App的，需要绑定很多环境
+
+基于这些原因，几乎不可能在现有的工程里面灵活的集成slate，可能另外新建React工程是一个更好的选择
+
+React根据不同的用途提供了几种可选工具链:
+
+- 使用npx直接构造一个单页app
+- 构建使用Nodejs的服务器端渲染网站 —— Next.js
+- 构建一个静态内容网站 —— Gatsby.js
+- 其余更多灵活配置的工具链
+
+
+
+## React
+
+React的设计也是十分有趣的，我们单独用一章来玩味
 
 
 
