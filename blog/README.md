@@ -930,8 +930,9 @@ gulp.task('default', () => {
   gulp <任务名>
   ```
 
-
 ### slate
+
+[官方链接](https://docs.slatejs.org/general/resources)
 
 slate是一个有使命感的开源库，作者对于网上几种富文本编辑器进行了深入研究之后，给出了自己对富文本编辑器的答案
 
@@ -960,7 +961,53 @@ slate对上述问题给出的答案是:
 - 为协同编辑设计的数据结构
 - 消除核心与插件的边界，模糊核心与插件之间的差别
 
-#### React
+#### Data Model
+
+Slate的数据结构是对DOM的映射，因此DOM中的概念在Slate几乎可以没有转换直接使用
+
+##### Range
+
+- Html文档中的随意一段内容
+- 有起点（anchor）和终点（offset）
+  - 两者可以是同一个点
+  - `anchor`可能在`offset`的后面（取决于鼠标选择的方向）
+  - 为了方便，`slate`提供一个保证方向顺序的属性`start`和`end`
+  - 可以自己创建一段`Range`
+
+##### Selection
+
+- 代表当前选中的Range
+- 标准的`DOM`里面`Selection`可以包含多个元素
+
+##### Point
+
+- 借鉴与`Range`，表示一个点
+
+
+
+为了方便处理文本和减少迷惑，`slate`对部分`DOM`标准进行了限制
+
+- `Document`必须含有`Block`节点作为直接子节点
+
+  这点反映了富文本编辑器的工作方式，最顶层的元素在按`Enter`键时可以拆分
+
+- `Block`节点可以包含其他`Block`节点，也可以包含`inline`和`text`节点
+
+- `inline`节点只能包含`inline`节点或`text`节点
+
+- 两个`text`节点靠近一起会自动合并成一个
+
+- `Block`和`inline`节点至少要包含一个`text`节点
+
+  `slate`会假设这一点，并且在访问文本相关属性时自动进入这个`Block`或者`inline`
+
+
+
+
+
+## React
+
+[官方链接](https://reactjs.org/docs/create-a-new-react-app.html)
 
 slate使用React作为渲染框架，这直接限定了我们选择其他部件的可能。
 
@@ -976,13 +1023,134 @@ React根据不同的用途提供了几种可选工具链:
 - 构建一个静态内容网站 —— Gatsby.js
 - 其余更多灵活配置的工具链
 
+#### JSX
+
+JSX的出现是为了解决html开发过程中处理ui和逻辑的代码过度零散的问题，解决的方法是将所有ui操作和逻辑都放到同一个`component`里面
+
+JSX很像是一个javascript版本的模板语言，因此我们也会以同样的角度去看待JSX
+
+- 可以访问外部的js命名空间
+- 模板语法本身也是一个表达式
+- 潜在的注入攻击保护
+
+#### 组件（Component）
+
+Component可以简单的认为是一个js函数，传入属性（props），它返回你应该怎么渲染这个组件
+
+- 组件名首字母大写
+- 保证props是一个纯函数（只读）
+
+#### props和state
+
+`state`和`props`很像，只是State是完全由组件控制的（`props`对于组件来说是只读的），对于`state`的用法有几点说明:
+
+- 除了在构造函数以外，都使用`setState`方法设置
+
+- `state`和`props`不是同步更新的，不能假设`state`更新后，`props`就可以拿到最新的值
+
+  ```javascript
+  this.setState((state, props) => ({
+    counter: state.counter + props.increment
+  }));
+  ```
+
+- `state`对于使用浅合并的方式合并对象（可以理解为增量更新）
+
+#### 自上而下的数据流
+
+对于一个`component`而言，无论是它的父组件还是子组件都不应该关心它是否有状态（stateful）或者无状态（stateless）
+
+举个例子，子组件在收到外部传来的属性时，根本不知道是父组件的props还是state还是手动输入的值
+
+这种单向数据流的好处是组件的使用变得相当的灵活，由于没有上下文的约束，有状态和无状态的组件可以任意组合
+
+#### 向上传递State
+
+有些时候，我们不可避免的需要关心组件之间的状态，这个时候要有方法可以修改组件内部的状态，React把这种场景成为 Lifting State Up，意思是组件向外部暴露方法设置其内部属性
+
+#### 组合与继承
+
+在使用继承方式编写代码之后，都会寻求一定程度的组合，React鼓励以组合的思维方式编写组件
+
+##### children
+
+```react
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+// WelcomeDialog 把自己的ui嵌入了 FancyBorder 
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  );
+}
+```
+
+上面的组件使用`props.children`预留了子组件的位置，组件的使用者（WelcomeDialog）可以方便把自己的组件嵌套在其中
+
+如果想要更多的插槽，React允许你自定义插槽
+
+```react
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <SplitPane
+      left={
+        <Contacts />
+      }
+      right={
+        <Chat />
+      } />
+  );
+}
+```
+
+#### Lifecycle
+
+- mount 和 unmount
+
+  这个概念是组件挂载和弹出Html节点的生命周期
+
+- 组件中有一些声明周期方法，componentDidMount（挂载）算是一个
 
 
-## React
 
-React的设计也是十分有趣的，我们单独用一章来玩味
+## Gatsby.js
+
+[官方链接](https://www.gatsbyjs.org/docs/)
+
+Gatsby.js是对静态网站方向的React脚手架，开箱即用
+
+然而集成度太高反而限制了我的手脚，我只需一个简单的界面，不需要太多已经定制好的“漂亮样式”
 
 
+
+## Next.js
+
+Next.js貌似是一个更好的选择，然而还没开始用就让我注册这一点马上把我逼退了
 
 
 
