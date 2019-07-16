@@ -51,6 +51,18 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handler, **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
+
+    def set_default_headers(self):
+        print("setting headers!!!")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+    
+    def options(self):
+            # no body
+            self.set_status(204)
+            self.finish()
+
     def raw_to_obj(self, dictdata):
         obj = tornado.util.ObjectDict()
         for k in dictdata.keys():
