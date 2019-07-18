@@ -545,7 +545,15 @@ if __name__ == "__main__":
 
 #### 跨域请求欺骗（XSRF）保护
 
+tornado在check_xsrf_cookie方法中对所有post请求进行检查，判断参数中的`_xsrf`字段与cookies中的`_xsrf`是否匹配
 
+- post请求中的_xsrf参数在模板代码中是由`{% module xsrf_form_html() %}`设置的
+- 如果自定义post请求，需要自己获取浏览器cookies中的`_xsrf`参数
+
+一个正常的登录请求应该是这样，
+
+1. 一开始浏览器中的cookies是没有`_xsrf`参数的，先使用模板中自带的post方法向服务器发起登录请求
+2. 一旦服务器验证成功后，会设置浏览器的cookies的`_xsrf`，后续的所有请求都可以使用这个参数避开跨域问题了
 
 
 
