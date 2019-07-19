@@ -897,5 +897,14 @@ save 方法会保存当前已经用`pm2`启动的程序到自启动名单
 
 - 与注释的区别在于，`CDATA`里面的内容还是文档的一部分
 
+#### 跨域请求问题
 
+- 分清楚是谁的问题，错误是谁发出的，浏览器还是服务器
+- 大部分情况下，跨域问题都应该由服务器解决的
 
+#### localhost跨域请求
+
+chrome不支持localhost的跨域请求[详情](https://bugs.chromium.org/p/chromium/issues/detail?id=67743)
+
+- 使用`--disable-web-security`启动chrome（测试环境下）
+- 使用127.0.0.1代替localhost
